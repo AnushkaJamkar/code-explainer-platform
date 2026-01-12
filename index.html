@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Explainer Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: false });
+</script>
+
+</head>
+<body>
+
+  <!-- NAVBAR -->
+ <header class="navbar">
+  <div class="nav-left">
+    <h2 class="logo">Code Explainer</h2>
+  </div>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="#home">Home</a>
+    <a href="#how">How It Works</a>
+    <a href="#languages">Languages</a>
+    <a href="#about">About</a>
+  </nav>
+
+  <div class="hamburger" id="hamburger">
+    ☰
+  </div>
+</header>
+
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+  <h1>Understand Code, Line by Line</h1>
+
+  <p class="hero-sub">
+    Learn how programs actually work in
+    <span id="typing-text"></span>
+  </p>
+
+  <button id="startBtn" class="primary-btn">
+    Write Your Code
+  </button>
+</section>
+
+
+  <!-- CODE INPUT SECTION -->
+  <section id="editor" class="editor-section">
+    <h2>Explain Your Code</h2>
+
+    <label for="language">Choose Language</label>
+    <select id="language">
+      <option value="javascript">JavaScript</option>
+      <option value="python">Python</option>
+      <option value="php">PHP</option>
+    </select>
+
+    <textarea
+      id="codeInput"
+      placeholder="Write or paste your code here..."
+      rows="12"
+    ></textarea>
+
+    <button id="explainBtn" class="primary-btn">Explain Code</button>
+  </section>
+
+  <!-- OUTPUT SECTION -->
+  <section id="output" class="output-section">
+    <div class="output-box">
+      <h3>Line-by-Line Explanation</h3>
+      <div id="explanation">
+        <p class="placeholder">Explanation will appear here...</p>
+      </div>
+    </div>
+
+    <div class="output-box">
+      <h3>Flowchart</h3>
+     <div id="flowchart">
+  <p class="placeholder">Flowchart will appear here (if logic exists).</p>
+</div>
+
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="info-section">
+  <h2>How It Works</h2>
+
+  <div class="steps">
+    <div class="step-card">
+      <span class="step-number">1</span>
+      <h3>Choose Language</h3>
+      <p>Select JavaScript, Python, or PHP.</p>
+    </div>
+
+    <div class="step-card">
+      <span class="step-number">2</span>
+      <h3>Paste Code</h3>
+      <p>Paste your source code into the editor.</p>
+    </div>
+
+    <div class="step-card">
+      <span class="step-number">3</span>
+      <h3>Learn with Explanation</h3>
+      <p>Get line-by-line explanation and flowchart.</p>
+    </div>
+  </div>
+</section>
+
+
+  <!-- LANGUAGES -->
+ <section id="languages" class="info-section">
+  <h2>Languages Supported</h2>
+
+  <div class="language-cards">
+    <div class="lang-card full">JavaScript <span>Full</span></div>
+    <div class="lang-card full">Python <span>Full</span></div>
+    <div class="lang-card partial">PHP <span>Partial</span></div>
+  </div>
+</section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>
+      © 2026 Code Explainer Platform <br />
+      Built by <strong>Anushka</strong>
+    </p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
