@@ -1,4 +1,5 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -39,11 +40,21 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 async function startServer() {
-  if (!process.env.MONGO_URI) {
-    throw new Error("Missing MONGO_URI in environment");
+  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+
+  if (!mongoUri) {
+    throw new Error("Missing MONGO_URI or MONGODB_URI in environment");
   }
 
-  await mongoose.connect(process.env.MONGO_URI);
+  try {
+    new URL(mongoUri);
+  } catch {
+    throw new Error("Invalid Mongo URI format. Check scheme, special characters, and query string.");
+  }
+
+  await mongoose.connect(mongoUri, {
+    serverSelectionTimeoutMS: 10000
+  });
   console.log("MongoDB Connected");
 
   app.listen(PORT, () => {
