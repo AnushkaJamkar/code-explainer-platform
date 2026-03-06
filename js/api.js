@@ -17,7 +17,7 @@ function resolveApiBaseUrl() {
     return "http://localhost:5000";
   }
 
-  return "";
+  return "https://code-explainer-platform.onrender.com";
 }
 
 function toApiUrl(path) {
