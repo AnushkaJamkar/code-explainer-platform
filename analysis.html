@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analysis Result | Code Explainer</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header class="navbar">
+  <h2 class="logo">Code Explainer</h2>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <a href="index.html" class="primary-btn" style="padding:8px 16px; margin-top:0;">Back to New Analysis</a>
+    <a href="sample-playground.html" class="primary-btn" style="padding:8px 16px; margin-top:0;">Playground</a>
+    <a href="ai-tutor.html" class="primary-btn" style="padding:8px 16px; margin-top:0;">AI Tutor</a>
+    <a href="ai-insights.html" class="primary-btn" style="padding:8px 16px; margin-top:0;">AI Insights</a>
+    <button id="exportPdfBtn" class="primary-btn" style="padding:8px 16px; margin-top:0;">Export PDF</button>
+  </div>
+</header>
+
+<section class="analysis-container">
+
+  <h1>Code Analysis Report</h1>
+
+  <!-- ================= METRICS ================= -->
+  <div class="metrics-grid">
+
+    <div class="metric-card">
+      <h3>Total Lines</h3>
+      <p id="metricLines">0</p>
+    </div>
+
+    <div class="metric-card">
+      <h3>Functions</h3>
+      <p id="metricFunctions">0</p>
+    </div>
+
+    <div class="metric-card">
+      <h3>Loops</h3>
+      <p id="metricLoops">0</p>
+    </div>
+
+    <div class="metric-card">
+      <h3>Decisions</h3>
+      <p id="metricDecisions">0</p>
+    </div>
+
+    <div class="metric-card">
+      <h3>Cyclomatic Complexity</h3>
+      <p id="metricComplexity">0</p>
+    </div>
+
+    <div class="metric-card">
+      <h3>Max Nesting Depth</h3>
+      <p id="metricNesting">0</p>
+    </div>
+
+    <div class="metric-card">
+      <h3>Maintainability Score</h3>
+      <p id="metricMaintainability">0</p>
+    </div>
+
+    <div class="metric-card">
+      <h3>Time Complexity</h3>
+      <p id="metricTime">O(1)</p>
+    </div>
+
+  </div>
+
+  <!-- ================= CODE HEALTH OVERVIEW ================= -->
+  <div class="analysis-block">
+    <h2>Code Health Overview</h2>
+
+    <div class="complexity-bar-container">
+      <div class="complexity-bar">
+        <div id="complexityFill" class="complexity-fill"></div>
+      </div>
+    </div>
+
+    <p id="complexityLabel" style="margin-top:12px;font-weight:600;"></p>
+    <p id="healthVerdict" style="opacity:0.8;"></p>
+  </div>
+
+  <!-- ================= RADAR CHART ================= -->
+  <div class="analysis-block">
+    <h2>Code Quality Radar</h2>
+    <canvas id="radarChart" height="300"></canvas>
+  </div>
+
+  <!-- ================= CODE SMELLS ================= -->
+  <div class="analysis-block">
+    <h2>Code Smells</h2>
+    <ul id="smellsList"></ul>
+  </div>
+
+  <!-- ================= AI SUGGESTIONS ================= -->
+  <div class="analysis-block">
+    <h2>AI Suggestions</h2>
+
+    <p id="summaryText"></p>
+
+    <h4>Refactoring Hints</h4>
+    <ul id="refactorList"></ul>
+
+    <h4>Performance Tips</h4>
+    <ul id="performanceList"></ul>
+  </div>
+
+  <!-- ================= LINE-BY-LINE EXPLANATION ================= -->
+  <div class="analysis-block">
+    <h2>Line-by-Line Explanation</h2>
+    <div id="explanation"></div>
+  </div>
+
+  <!-- ================= FLOWCHART ================= -->
+  <div class="analysis-block">
+    <h2>Program Flowchart</h2>
+    <div id="flowchart"></div>
+  </div>
+
+</section>
+
+<!-- ================= SCRIPTS (ORDER MATTERS) ================= -->
+
+<!-- Mermaid (Must load before analysis.js uses it) -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: false });
+</script>
+
+<!-- jsPDF for Export -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<!-- Analysis Logic -->
+<script src="js/analysis.js"></script>
+
+</body>
+</html>

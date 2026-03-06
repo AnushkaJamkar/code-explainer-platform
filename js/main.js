@@ -1,233 +1,220 @@
-// ---------------- SCROLL TO EDITOR ----------------
-document.getElementById("startBtn").addEventListener("click", () => {
-  document.getElementById("editor").scrollIntoView({ behavior: "smooth" });
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const user = readUserFromStorage();
+  if (user && user.name) {
+    const nameEl = document.getElementById("userName");
+    const initialEl = document.getElementById("userInitial");
+
+    if (nameEl) nameEl.innerText = user.name;
+    if (initialEl) initialEl.innerText = user.name.charAt(0).toUpperCase();
+  }
+
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("navMenu");
+  if (hamburger && navMenu) {
+    hamburger.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+    });
+  }
+
+  const startBtn = document.getElementById("startBtn");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      const editor = document.getElementById("editor");
+      if (editor) editor.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  const explainBtn = document.getElementById("explainBtn");
+  if (explainBtn) {
+    explainBtn.addEventListener("click", explainCode);
+  }
+
+  hydrateEditorFromPlaygroundDraft();
+
+  startTypingEffect();
+  loadHistory();
 });
 
-// ---------------- MAIN EXPLAIN BUTTON ----------------
-document.getElementById("explainBtn").addEventListener("click", () => {
-  const language = document.getElementById("language").value;
-  const code = document.getElementById("codeInput").value;
-  const explanationBox = document.getElementById("explanation");
-  const flowchartBox = document.getElementById("flowchart");
+function readUserFromStorage() {
+  const raw = localStorage.getItem("user");
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    localStorage.removeItem("user");
+    return null;
+  }
+}
+
+function startTypingEffect() {
+  const texts = ["Understand Code.", "Improve Logic.", "Build Better Software."];
+  const typingElement = document.getElementById("typing-text");
+  if (!typingElement) return;
+
+  let textIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+
+  function typeEffect() {
+    const currentText = texts[textIndex];
+
+    if (!isDeleting) {
+      typingElement.textContent = currentText.substring(0, charIndex++);
+      if (charIndex > currentText.length) {
+        isDeleting = true;
+        setTimeout(typeEffect, 1200);
+        return;
+      }
+    } else {
+      typingElement.textContent = currentText.substring(0, charIndex--);
+      if (charIndex < 0) {
+        isDeleting = false;
+        textIndex = (textIndex + 1) % texts.length;
+      }
+    }
+
+    setTimeout(typeEffect, isDeleting ? 40 : 80);
+  }
+
+  typeEffect();
+}
+
+async function explainCode() {
+  const token = localStorage.getItem("token");
+  const languageEl = document.getElementById("language");
+  const codeInput = document.getElementById("codeInput");
+
+  if (!token || !languageEl || !codeInput) {
+    alert("Missing required page data. Please reload the page.");
+    return;
+  }
+
+  const language = languageEl.value;
+  const code = codeInput.value;
 
   if (!code.trim()) {
     alert("Please write or paste some code first.");
     return;
   }
 
-  // ---------- LINE BY LINE EXPLANATION ----------
-  const lines = code.split("\n");
-  explanationBox.innerHTML = "";
+  try {
+    const response = await apiFetch("/api/explain", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ code, language })
+    });
 
-  lines.forEach((line, index) => {
-    const cleanLine = line.trim();
-    const explanation = explainLine(cleanLine, language);
+    const data = await response.json().catch(() => ({}));
 
-    const block = document.createElement("div");
-    block.style.marginBottom = "14px";
+    if (!response.ok) {
+      throw new Error(data.message || data.error || "Unable to analyze code");
+    }
 
-    block.innerHTML = `
-      <strong>Line ${index + 1}:</strong>
-      <code>${cleanLine || "(empty line)"}</code>
-      <div>${explanation}</div>
-      <hr/>
-    `;
+    const analysisResult = {
+      ...data,
+      code
+    };
 
-    explanationBox.appendChild(block);
-  });
-
-  // ---------- FLOWCHART ----------
-  const chart = generateFlowchart(code);
-
-  if (!chart) {
-    flowchartBox.innerHTML =
-      "<p class='placeholder'>No control flow detected.</p>";
-    return;
+    sessionStorage.setItem("analysisResult", JSON.stringify(analysisResult));
+    window.location.href = "analysis.html";
+  } catch (error) {
+    console.error("Explain Error:", error);
+    alert(error.message || "Something went wrong. Try again.");
   }
-
-  flowchartBox.innerHTML = `<div class="mermaid">${chart}</div>`;
-  mermaid.init(undefined, document.querySelectorAll(".mermaid"));
-});
-
-// ---------------- EXPLANATION LOGIC ----------------
-function explainLine(line, language) {
-  if (line === "") {
-    return `
-      <b>What it does:</b> This is an empty line.<br/>
-      <b>Why needed:</b> Improves readability.<br/>
-      <b>If removed:</b> Code still works but looks messy.
-    `;
-  }
-
-  if (line.startsWith("//") || line.startsWith("#")) {
-    return `
-      <b>What it does:</b> This is a comment.<br/>
-      <b>Why needed:</b> Helps humans understand code.<br/>
-      <b>If removed:</b> Program still works, readability decreases.
-    `;
-  }
-
-  if (language === "javascript") {
-    if (line.includes("for")) {
-      return `
-        <b>What it does:</b> Starts a loop.<br/>
-        <b>Why needed:</b> Repeats a task automatically.<br/>
-        <b>If removed:</b> Repetition will not occur.
-      `;
-    }
-    if (line.startsWith("if")) {
-      return `
-        <b>What it does:</b> Checks a condition.<br/>
-        <b>Why needed:</b> Controls decision making.<br/>
-        <b>If removed:</b> Code may run incorrectly.
-      `;
-    }
-    if (line.includes("console.log")) {
-      return `
-        <b>What it does:</b> Prints output to console.<br/>
-        <b>Why needed:</b> Shows results/debugging.<br/>
-        <b>If removed:</b> No output shown.
-      `;
-    }
-    if (line.includes("let ") || line.includes("const ") || line.includes("var ")) {
-      return `
-        <b>What it does:</b> Declares a variable.<br/>
-        <b>Why needed:</b> Stores data.<br/>
-        <b>If removed:</b> Errors due to undefined variables.
-      `;
-    }
-    if (line === "}") {
-      return `
-        <b>What it does:</b> Ends a code block.<br/>
-        <b>Why needed:</b> Defines scope.<br/>
-        <b>If removed:</b> Syntax error.
-      `;
-    }
-  }
-
-  if (language === "python") {
-    if (line.startsWith("for")) {
-      return `
-        <b>What it does:</b> Loops over a sequence.<br/>
-        <b>Why needed:</b> Avoids repetitive code.<br/>
-        <b>If removed:</b> Loop logic breaks.
-      `;
-    }
-    if (line.startsWith("if")) {
-      return `
-        <b>What it does:</b> Checks a condition.<br/>
-        <b>Why needed:</b> Controls flow.<br/>
-        <b>If removed:</b> Wrong execution.
-      `;
-    }
-    if (line.includes("print")) {
-      return `
-        <b>What it does:</b> Displays output.<br/>
-        <b>Why needed:</b> Shows result to user.<br/>
-        <b>If removed:</b> No output visible.
-      `;
-    }
-  }
-
-  if (language === "php") {
-    if (line.startsWith("$")) {
-      return `
-        <b>What it does:</b> Declares a variable.<br/>
-        <b>Why needed:</b> Stores value.<br/>
-        <b>If removed:</b> Undefined variable error.
-      `;
-    }
-    if (line.startsWith("if")) {
-      return `
-        <b>What it does:</b> Checks a condition.<br/>
-        <b>Why needed:</b> Controls logic.<br/>
-        <b>If removed:</b> Logic failure.
-      `;
-    }
-    if (line.includes("echo")) {
-      return `
-        <b>What it does:</b> Outputs text.<br/>
-        <b>Why needed:</b> Displays result.<br/>
-        <b>If removed:</b> No output.
-      `;
-    }
-  }
-
-  return `
-    <b>What it does:</b> Part of program logic.<br/>
-    <b>Why needed:</b> Supports execution.<br/>
-    <b>If removed:</b> Program behavior may change.
-  `;
 }
 
-// ---------------- FLOWCHART GENERATION ----------------
-function generateFlowchart(code) {
-  const lines = code.split("\n").map(l => l.trim());
-  const hasLoop = lines.some(l => l.startsWith("for") || l.startsWith("while"));
-  const hasIf = lines.some(l => l.startsWith("if"));
+async function loadHistory() {
+  const token = localStorage.getItem("token");
+  if (!token) return;
 
-  if (!hasLoop && !hasIf) return null;
+  try {
+    const response = await apiFetch("/api/history", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
-  if (hasIf && !hasLoop) {
-    return `
-flowchart TD
-  A([Start])
-  A --> B{Condition?}
-  B -- True --> C[Execute Code]
-  B -- False --> D[Skip Code]
-  C --> E([End])
-  D --> E
-`;
+    if (!response.ok) {
+      throw new Error("History fetch failed");
+    }
+
+    const data = await response.json();
+
+    const historyList = document.getElementById("historyList");
+    const totalAnalysesEl = document.getElementById("totalAnalyses");
+    const totalLinesEl = document.getElementById("totalLines");
+
+    if (!historyList) return;
+
+    historyList.innerHTML = "";
+    let totalLines = 0;
+
+    if (!Array.isArray(data) || data.length === 0) {
+      historyList.innerHTML = "<p>No history yet.</p>";
+      if (totalAnalysesEl) totalAnalysesEl.innerText = "0";
+      if (totalLinesEl) totalLinesEl.innerText = "0";
+      return;
+    }
+
+    data.forEach((item) => {
+      const lines = item.metrics?.totalLines || 0;
+      totalLines += lines;
+
+      const div = document.createElement("div");
+      div.className = "history-card";
+
+      div.innerHTML = `
+        <div class="history-top">
+          <span class="lang-badge">${String(item.language || "unknown").toUpperCase()}</span>
+          <span class="date">${new Date(item.createdAt).toLocaleString()}</span>
+        </div>
+        <div class="history-stats">Lines: ${lines}</div>
+      `;
+
+      historyList.appendChild(div);
+    });
+
+    if (totalAnalysesEl) totalAnalysesEl.innerText = String(data.length);
+    if (totalLinesEl) totalLinesEl.innerText = String(totalLines);
+  } catch (error) {
+    console.error("History Load Error:", error);
   }
-
-  return `
-flowchart TD
-  A([Start])
-  A --> B[Initialize]
-  B --> C{Condition?}
-  C -- Yes --> D[Execute Loop Body]
-  D --> B
-  C -- No --> E([End])
-`;
-}
-// ---------------- TYPEWRITER EFFECT ----------------
-const words = ["JavaScript", "Python", "PHP"];
-let wordIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-
-const typingElement = document.getElementById("typing-text");
-
-function typeEffect() {
-  const currentWord = words[wordIndex];
-
-  if (!isDeleting) {
-    typingElement.textContent = currentWord.substring(0, charIndex + 1);
-    charIndex++;
-  } else {
-    typingElement.textContent = currentWord.substring(0, charIndex - 1);
-    charIndex--;
-  }
-
-  if (charIndex === currentWord.length) {
-    isDeleting = true;
-    setTimeout(typeEffect, 1000);
-    return;
-  }
-
-  if (charIndex === 0 && isDeleting) {
-    isDeleting = false;
-    wordIndex = (wordIndex + 1) % words.length;
-  }
-
-  setTimeout(typeEffect, isDeleting ? 60 : 100);
 }
 
-typeEffect();
-// ---------------- HAMBURGER MENU ----------------
-const hamburger = document.getElementById("hamburger");
-const navLinks = document.getElementById("navLinks");
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  sessionStorage.removeItem("analysisResult");
+  window.location.href = "login.html";
+}
 
-hamburger.addEventListener("click", () => {
-  navLinks.classList.toggle("active");
-});
+function hydrateEditorFromPlaygroundDraft() {
+  const draftCode = sessionStorage.getItem("draftCode");
+  const draftLanguage = sessionStorage.getItem("draftLanguage");
+
+  if (!draftCode) return;
+
+  const codeInput = document.getElementById("codeInput");
+  const languageEl = document.getElementById("language");
+
+  if (codeInput) {
+    codeInput.value = draftCode;
+  }
+
+  if (languageEl && draftLanguage) {
+    languageEl.value = draftLanguage;
+  }
+
+  sessionStorage.removeItem("draftCode");
+  sessionStorage.removeItem("draftLanguage");
+}

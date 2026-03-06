@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Insights | Code Explainer</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="navbar">
+  <h2 class="logo">Code Explainer</h2>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <a href="analysis.html" class="primary-btn" style="padding:8px 16px; margin-top:0;">Back to Analysis</a>
+    <a href="ai-tutor.html" class="primary-btn" style="padding:8px 16px; margin-top:0;">AI Tutor</a>
+    <a href="sample-playground.html" class="primary-btn" style="padding:8px 16px; margin-top:0;">Playground</a>
+    <button id="refreshInsightsBtn" class="primary-btn" style="padding:8px 16px; margin-top:0;">Generate Again</button>
+  </div>
+</header>
+
+<section class="analysis-container">
+  <h1>AI Refactoring Insights</h1>
+  <p id="aiStatus" style="opacity:0.85; margin-top:8px;">Preparing AI review...</p>
+
+  <div class="analysis-block">
+    <h2>Overview</h2>
+    <p id="overviewText">Loading...</p>
+    <p id="riskText" style="font-weight:600;"></p>
+  </div>
+
+  <div class="analysis-block">
+    <h2>Code Smells Explanation</h2>
+    <div id="smellsInsights"></div>
+  </div>
+
+  <div class="analysis-block">
+    <h2>Refactoring Suggestions</h2>
+    <div id="refactorInsights"></div>
+  </div>
+
+  <div class="analysis-block">
+    <h2>Quick Wins</h2>
+    <ul id="quickWinsList"></ul>
+  </div>
+
+  <div class="analysis-block">
+    <h2>Next Learning Steps</h2>
+    <ul id="learningStepsList"></ul>
+  </div>
+
+  <div class="analysis-block">
+    <h2>LLM JSON Output</h2>
+    <pre id="rawJsonOutput" style="white-space:pre-wrap; word-break:break-word;"></pre>
+  </div>
+</section>
+
+<script src="js/api.js"></script>
+<script src="js/ai-insights.js"></script>
+</body>
+</html>

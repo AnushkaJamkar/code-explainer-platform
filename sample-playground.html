@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sample Playground | Code Explainer</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="navbar">
+  <h2 class="logo">Code Explainer</h2>
+  <div class="page-actions">
+    <a href="index.html" class="primary-btn compact-btn">Back to Home</a>
+    <a href="ai-tutor.html" class="primary-btn compact-btn">AI Tutor</a>
+  </div>
+</header>
+
+<section class="analysis-container">
+  <h1>Sample Playground</h1>
+  <p class="subtle-text">Try prebuilt examples, edit them, and send to analyzer/tutor.</p>
+
+  <div class="analysis-block">
+    <h2>Pick a Sample</h2>
+    <div class="playground-controls">
+      <div class="editor-controls">
+      <label for="sampleLanguage">Language</label>
+      <select id="sampleLanguage">
+        <option value="javascript">JavaScript</option>
+        <option value="python">Python</option>
+        <option value="php">PHP</option>
+      </select>
+      </div>
+
+      <div class="editor-controls">
+        <label for="sampleDifficulty">Difficulty</label>
+        <select id="sampleDifficulty">
+          <option value="all">All</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="playground-controls">
+      <div class="editor-controls">
+      <label for="sampleSnippet">Sample</label>
+      <select id="sampleSnippet"></select>
+      </div>
+
+      <div class="editor-controls">
+        <label for="sampleSearch">Search sample</label>
+        <input id="sampleSearch" class="text-input" type="text" placeholder="Try: loop, auth, grade..." />
+      </div>
+    </div>
+
+    <div id="sampleMeta" class="sample-meta"></div>
+
+    <textarea id="sampleCode" class="playground-code" rows="14" placeholder="Sample code appears here..."></textarea>
+
+    <div class="action-row">
+      <button id="analyzeSampleBtn" class="primary-btn compact-btn">Analyze This Sample</button>
+      <button id="runQuickAnalyzeBtn" class="primary-btn compact-btn">Quick Analyze Here</button>
+      <button id="askTutorFromSampleBtn" class="primary-btn compact-btn">Ask Tutor on This</button>
+      <button id="copySampleBtn" class="primary-btn compact-btn">Copy Code</button>
+      <button id="randomSampleBtn" class="primary-btn compact-btn">Random Sample</button>
+    </div>
+  </div>
+
+  <div class="analysis-block">
+    <h2>Quick Result</h2>
+    <div id="playgroundResult">Run quick analyze to preview metrics.</div>
+  </div>
+</section>
+
+<script src="js/api.js"></script>
+<script src="js/playground.js"></script>
+</body>
+</html>

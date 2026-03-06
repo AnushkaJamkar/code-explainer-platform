@@ -35,3 +35,27 @@ This project is designed for students and beginner programmers who want to under
 
 ## 👩‍💻 Author
 **Anushka Jamkar**
+
+## AI Insights Setup (Free + Deploy Friendly)
+
+The project now supports two AI modes:
+
+1. `AI_PROVIDER=mock` (recommended for college demo)
+- No paid API required.
+- Works in local and deployed environments.
+- Returns structured JSON insights with code smells + refactoring suggestions.
+
+2. `AI_PROVIDER=openai_compat`
+- Works with OpenRouter, LocalAI, or any OpenAI-compatible API.
+- Configure `AI_API_URL`, `AI_MODEL`, and `AI_API_KEY`.
+
+### Quick start
+
+1. Copy `backend/.env.example` to `backend/.env`.
+2. Keep `AI_PROVIDER=mock` for free usage.
+3. Start backend and frontend as usual.
+
+### Security note
+
+- Do not commit real API keys.
+- Keep `backend/.env` private.

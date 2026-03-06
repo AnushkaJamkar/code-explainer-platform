@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Tutor | Code Explainer</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="navbar">
+  <h2 class="logo">Code Explainer</h2>
+  <div class="page-actions">
+    <a href="analysis.html" class="primary-btn compact-btn">Back to Analysis</a>
+    <a href="sample-playground.html" class="primary-btn compact-btn">Sample Playground</a>
+  </div>
+</header>
+
+<section class="analysis-container">
+  <h1>AI Tutor</h1>
+  <p id="tutorStatus" class="subtle-text">Ask any question about your code.</p>
+
+  <div class="analysis-block">
+    <h2>Current Code Context</h2>
+    <pre id="contextPreview" class="context-preview"></pre>
+  </div>
+
+  <div class="analysis-block">
+    <h2>Ask Tutor</h2>
+    <div class="prompt-chip-row">
+      <button class="prompt-chip" data-q="Why is complexity high and how do I reduce it?">Reduce Complexity</button>
+      <button class="prompt-chip" data-q="Explain this code step-by-step in simple terms.">Explain Step-by-Step</button>
+      <button class="prompt-chip" data-q="What should I refactor first and why?">Refactor Priority</button>
+    </div>
+    <textarea id="tutorQuestion" class="tutor-question" rows="4" placeholder="Example: Why is my cyclomatic complexity high and how can I reduce it?"></textarea>
+    <button id="askTutorBtn" class="primary-btn compact-btn">Ask Tutor</button>
+  </div>
+
+  <div class="analysis-block">
+    <h2>Tutor Response</h2>
+    <div id="tutorResponse"></div>
+  </div>
+
+  <div class="analysis-block">
+    <h2>Session Q&A</h2>
+    <div id="qaHistory"></div>
+  </div>
+</section>
+
+<script src="js/api.js"></script>
+<script src="js/ai-tutor.js"></script>
+</body>
+</html>
