@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
-const CodeHistory = require("../models/CodeHistory");
+const { getHistoryForUser } = require("../utils/storage");
 
 router.get("/", authMiddleware, async (req, res, next) => {
   try {
-    const history = await CodeHistory.find({ user: req.user })
-      .sort({ createdAt: -1 });
+    const history = await getHistoryForUser(req.user);
 
     return res.json(history);
   } catch (error) {

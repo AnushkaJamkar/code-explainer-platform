@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
-const CodeHistory = require("../models/CodeHistory");
 const { runAnalysis } = require("../utils/explainService");
 const { createRateLimiter } = require("../middleware/rateLimit");
 const { createHttpError } = require("../utils/httpError");
+const { createHistoryRecord } = require("../utils/storage");
 
 const explainLimiter = createRateLimiter({
   windowMs: 60 * 1000,
@@ -26,7 +26,7 @@ router.post("/", authMiddleware, explainLimiter, async (req, res, next) => {
 
     const analysis = runAnalysis({ code, language });
 
-    const historyEntry = await CodeHistory.create({
+    const historyEntry = await createHistoryRecord({
       user: req.user,
       code,
       language: analysis.language,

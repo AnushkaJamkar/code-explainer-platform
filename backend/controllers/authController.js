@@ -1,6 +1,6 @@
-const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { findUserByEmail, createUserRecord } = require("../utils/storage");
 
 // ================= REGISTER =================
 exports.register = async (req, res) => {
@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
 
     email = email.toLowerCase().trim();
 
-    const userExists = await User.findOne({ email });
+    const userExists = await findUserByEmail(email);
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -24,7 +24,7 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    await createUserRecord({
       name: name.trim(),
       email,
       password: hashedPassword
@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
 
     email = email.toLowerCase().trim();
 
-    const user = await User.findOne({ email });
+    const user = await findUserByEmail(email);
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }

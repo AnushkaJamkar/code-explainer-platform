@@ -188,6 +188,10 @@ async function loadHistory() {
     if (totalLinesEl) totalLinesEl.innerText = String(totalLines);
   } catch (error) {
     console.error("History Load Error:", error);
+    const historyList = document.getElementById("historyList");
+    if (historyList) {
+      historyList.innerHTML = `<p class="auth-error">${escapeHtml(error.message || "Unable to load history.")}</p>`;
+    }
   }
 }
 
@@ -217,4 +221,13 @@ function hydrateEditorFromPlaygroundDraft() {
 
   sessionStorage.removeItem("draftCode");
   sessionStorage.removeItem("draftLanguage");
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
